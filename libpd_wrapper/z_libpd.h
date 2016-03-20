@@ -107,6 +107,7 @@ EXTERN void libpd_set_pitchbendhook(const t_libpd_pitchbendhook hook);
 EXTERN void libpd_set_aftertouchhook(const t_libpd_aftertouchhook hook);
 EXTERN void libpd_set_polyaftertouchhook(const t_libpd_polyaftertouchhook hook);
 EXTERN void libpd_set_midibytehook(const t_libpd_midibytehook hook);
+EXTERN int libpd_make_obj(const char *command);
 
 EXTERN int libpd_startgui(char *path);
 EXTERN void libpd_stopgui( void);

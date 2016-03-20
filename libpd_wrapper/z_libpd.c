@@ -582,3 +582,19 @@ void glob_forgetpreferences(t_pd *dummy) {}
 void sys_loadpreferences(const char *filename, int startingup) {}
 int sys_oktoloadfiles(int done) {return 1;}
 void sys_savepreferences(const char *filename) {} /* used in s_path.c */
+
+extern t_pd *newest;
+
+int libpd_make_obj(const char *command) {
+  t_binbuf *b = binbuf_new();
+  size_t length = strlen(command);
+  char command_cpy[length + 1];
+  strncpy(command_cpy, command, length + 1);
+  binbuf_text(b, command_cpy, length);
+  binbuf_eval(b, &pd_objectmaker, 0, 0);
+  int success = newest ? 0 : -1;
+  binbuf_free(b);
+  // TODO: We probably need to free newest here
+  newest = 0;
+  return success;
+}
