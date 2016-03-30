@@ -585,16 +585,58 @@ void sys_savepreferences(const char *filename) {} /* used in s_path.c */
 
 extern t_pd *newest;
 
-int libpd_make_obj(const char *command) {
+t_text *libpd_get_checkedobject(const char *command) {
+  newest = 0;
+  
   t_binbuf *b = binbuf_new();
   size_t length = strlen(command);
   char command_cpy[length + 1];
   strncpy(command_cpy, command, length + 1);
   binbuf_text(b, command_cpy, length);
   binbuf_eval(b, &pd_objectmaker, 0, 0);
-  int success = newest ? 0 : -1;
+
+  if (!newest) {
+    binbuf_free(b);
+    return NULL;
+  }
+  
+  t_text *retval = pd_checkobject(newest);
+
   binbuf_free(b);
-  // TODO: We probably need to free newest here
-  newest = 0;
-  return success;
+  return retval;
+}
+
+int libpd_make_obj(const char *command) {
+  t_text *checked_obj = libpd_get_checkedobject(command);
+
+  // TODO: What do we need to free here?
+  return checked_obj ? 0 : -1;
+}
+
+int libpd_inlet_type(const char *command, int inlet_index) {
+  t_text *checked_obj = libpd_get_checkedobject(command);
+
+  if (!checked_obj) {
+    return -1;
+  }
+
+  if (inlet_index < 0 || inlet_index >= obj_ninlets(checked_obj)) {
+    return -1;
+  }
+
+  return obj_issignalinlet(checked_obj, inlet_index) ? 2 : 1;
+}
+
+int libpd_outlet_type(const char *command, int outlet_index) {
+  t_text *checked_obj = libpd_get_checkedobject(command);
+
+  if (!checked_obj) {
+    return -1;
+  }
+
+  if (outlet_index < 0 || outlet_index >= obj_noutlets(checked_obj)) {
+    return -1;
+  }
+
+  return obj_issignaloutlet(checked_obj, outlet_index) ? 2 : 1;
 }

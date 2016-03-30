@@ -75,6 +75,8 @@ int libpd_midibyte(int p, int b);
 int libpd_sysex(int p, int b);
 int libpd_sysrealtime(int p, int b);
 int libpd_make_obj(const char *command);
+int libpd_inlet_type(const char *command, int inlet_index);
+int libpd_outlet_type(const char *command, int outlet_index);
 
 #define SET_CALLBACK(s) \
   int libpd_set_##s##_callback(PyObject *callback);
