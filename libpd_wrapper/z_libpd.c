@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2010 Peter Brinkmann (peter.brinkmann@gmail.com)
  *
@@ -165,8 +166,8 @@ int libpd_process_raw(const float *inBuffer, float *outBuffer) {
   size_t n_out = STUFF->st_outchannels * DEFDACBLKSIZE;
   t_sample *p;
   size_t i;
-  sys_lock();
-  sys_microsleep(0);
+  //sys_lock();
+  //sys_microsleep(0);
   for (p = STUFF->st_soundin, i = 0; i < n_in; i++) {
     *p++ = *inBuffer++;
   }
@@ -175,7 +176,7 @@ int libpd_process_raw(const float *inBuffer, float *outBuffer) {
   for (p = STUFF->st_soundout, i = 0; i < n_out; i++) {
     *outBuffer++ = *p++;
   }
-  sys_unlock();
+  //sys_unlock();
   return 0;
 }
 
@@ -185,8 +186,6 @@ static const t_sample sample_to_short = SHRT_MAX,
 #define PROCESS(_x, _y) \
   int i, j, k; \
   t_sample *p0, *p1; \
-  sys_lock(); \
-  sys_microsleep(0); \
   for (i = 0; i < ticks; i++) { \
     for (j = 0, p0 = STUFF->st_soundin; j < DEFDACBLKSIZE; j++, p0++) { \
       for (k = 0, p1 = p0; k < STUFF->st_inchannels; k++, p1 += DEFDACBLKSIZE) \
@@ -204,7 +203,6 @@ static const t_sample sample_to_short = SHRT_MAX,
       } \
     } \
   } \
-  sys_unlock(); \
   return 0;
 
 int libpd_process_short(const int ticks, const short *inBuffer, short *outBuffer) {
